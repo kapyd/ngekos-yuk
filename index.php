@@ -129,10 +129,10 @@ function rupiah(int $amount): string
             <div class="header-actions">
                 <?php if ($currentUser !== null): ?>
                     <span class="user-greeting">Hai, <?= htmlspecialchars((string) $currentUser['name']) ?></span>
-                    <a class="outline-button" href="?logout=1">Keluar</a>
+                    <a class="outline-button" href="/login?logout=1">Keluar</a>
                 <?php else: ?>
-                    <button class="text-button" type="button" data-auth-tab="login">Masuk</button>
-                    <button class="outline-button" type="button" data-auth-tab="register">Daftar</button>
+                    <a class="text-button" href="/login">Masuk</a>
+                    <a class="outline-button" href="/register">Daftar</a>
                 <?php endif; ?>
                 <button class="outline-button owner-button" type="button" data-toast="Fitur pasang iklan pemilik kos segera hadir.">Pasang iklan</button>
                 <button class="menu-toggle" type="button" aria-label="Buka menu" aria-expanded="false"><span></span><span></span></button>
