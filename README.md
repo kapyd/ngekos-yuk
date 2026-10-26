@@ -28,6 +28,8 @@ Buka `http://127.0.0.1:8000` di browser.
 
 Vercel tidak dapat mengakses SQL Server `localhost` di laptop. Gunakan Azure SQL Database atau SQL Server pada VPS yang dapat diakses dari internet. API Vercel memakai package `mssql` dan SQL Authentication.
 
+Untuk Azure SQL, gunakan script `database/azure-schema.sql` setelah database `ngekos_db` dibuat. Script ini membuat tiga tabel dan mengisi enam data kos awal. Script `database/setup.sql` tetap digunakan untuk SQL Server lokal karena berisi perintah pembuatan database.
+
 1. Pastikan service SQL Server berjalan.
 2. Jalankan script schema dan seed:
 
