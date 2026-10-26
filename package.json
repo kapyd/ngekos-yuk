@@ -1,0 +1,13 @@
+{
+  "name": "ngekos-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ngekos frontend statis dan API serverless untuk Vercel",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "mssql": "^11.0.1"
+  }
+}
