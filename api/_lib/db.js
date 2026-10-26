@@ -1,44 +1,13 @@
-const sql = require('mssql');
+const { createClient } = require('@supabase/supabase-js');
 
-let poolPromise;
+let client;
 
-function getConfig() {
-  const required = ['SQLSERVER_HOST', 'SQLSERVER_USER', 'SQLSERVER_PASSWORD', 'SQLSERVER_DATABASE'];
-  const missing = required.filter((key) => !process.env[key]);
-  if (missing.length) {
-    throw new Error(`Environment variable belum lengkap: ${missing.join(', ')}`);
-  }
-
-  return {
-    server: process.env.SQLSERVER_HOST,
-    user: process.env.SQLSERVER_USER,
-    password: process.env.SQLSERVER_PASSWORD,
-    database: process.env.SQLSERVER_DATABASE,
-    port: Number(process.env.SQLSERVER_PORT || 1433),
-    options: {
-      encrypt: process.env.SQLSERVER_ENCRYPT !== 'false',
-      trustServerCertificate: process.env.SQLSERVER_TRUST_CERT === 'true',
-    },
-    pool: { max: 5, min: 0, idleTimeoutMillis: 30000 },
-  };
+function getSupabase() {
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY belum diatur.');
+  if (!client) client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return client;
 }
 
-function getPool() {
-  if (!poolPromise) {
-    poolPromise = sql.connect(getConfig()).catch((error) => {
-      poolPromise = undefined;
-      throw error;
-    });
-  }
-  return poolPromise;
-}
-
-function parseFeatures(value) {
-  try {
-    return JSON.parse(value || '[]');
-  } catch {
-    return [];
-  }
-}
-
-module.exports = { sql, getPool, parseFeatures };
+module.exports = { getSupabase };

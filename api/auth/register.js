@@ -1,4 +1,4 @@
-const { getPool, sql } = require('../_lib/db');
+const { getSupabase } = require('../_lib/db');
 const { setSession } = require('../_lib/auth');
 const bcrypt = require('bcryptjs');
 
@@ -12,16 +12,13 @@ module.exports = async function handler(req, res) {
   if (password !== passwordConfirmation) return res.status(422).json({ error: 'Konfirmasi password tidak sama.' });
 
   try {
-    const pool = await getPool();
-    const existing = await pool.request().input('email', sql.NVarChar(180), normalizedEmail).query('SELECT TOP 1 id FROM dbo.users WHERE email = @email');
-    if (existing.recordset.length) return res.status(409).json({ error: 'Email tersebut sudah terdaftar.' });
+    const supabase = getSupabase();
+    const { data: existing, error: existingError } = await supabase.from('users').select('id').eq('email', normalizedEmail).maybeSingle();
+    if (existingError) throw existingError;
+    if (existing) return res.status(409).json({ error: 'Email tersebut sudah terdaftar.' });
     const passwordHash = await bcrypt.hash(String(password), 12);
-    const user = await pool.request()
-      .input('name', sql.NVarChar(120), String(name).trim())
-      .input('email', sql.NVarChar(180), normalizedEmail)
-      .input('passwordHash', sql.NVarChar(255), passwordHash)
-      .query('INSERT INTO dbo.users (name, email, password_hash) OUTPUT INSERTED.id, INSERTED.name, INSERTED.email, INSERTED.role VALUES (@name, @email, @passwordHash)');
-    const safeUser = user.recordset[0];
+    const { data: safeUser, error } = await supabase.from('users').insert({ name: String(name).trim(), email: normalizedEmail, password_hash: passwordHash }).select('id,name,email,role').single();
+    if (error) throw error;
     setSession(res, safeUser);
     return res.status(201).json({ user: safeUser });
   } catch (error) {

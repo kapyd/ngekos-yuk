@@ -26,9 +26,9 @@ Buka `http://127.0.0.1:8000` di browser.
 
 ## Menyiapkan SQL Server untuk Vercel
 
-Vercel tidak dapat mengakses SQL Server `localhost` di laptop. Gunakan Azure SQL Database atau SQL Server pada VPS yang dapat diakses dari internet. API Vercel memakai package `mssql` dan SQL Authentication.
+Untuk versi Vercel, API sekarang menggunakan Supabase PostgreSQL. SQL Server lokal tetap tersedia untuk mode PHP lokal.
 
-Untuk Azure SQL, gunakan script `database/azure-schema.sql` setelah database `ngekos_db` dibuat. Script ini membuat tiga tabel dan mengisi enam data kos awal. Script `database/setup.sql` tetap digunakan untuk SQL Server lokal karena berisi perintah pembuatan database.
+Jalankan script `database/supabase-schema.sql` di Supabase Dashboard → SQL Editor. Script ini membuat tiga tabel dan mengisi enam data kos awal.
 
 1. Pastikan service SQL Server berjalan.
 2. Jalankan script schema dan seed:
@@ -59,18 +59,12 @@ php -S 127.0.0.1:8000 router.php
 3. Di **Project Settings → Environment Variables**, tambahkan semua variable dari `.env.example`:
 
 ```text
-SQLSERVER_HOST=server-azure-sql.database.windows.net
-SQLSERVER_PORT=1433
-SQLSERVER_USER=nama-user-sql
-SQLSERVER_PASSWORD=password-sql
-SQLSERVER_DATABASE=ngekos_db
-SQLSERVER_ENCRYPT=true
-SQLSERVER_TRUST_CERT=false
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=service-role-key-dari-supabase
 SESSION_SECRET=random-string-minimal-32-karakter
 ```
 
-4. Pastikan firewall Azure SQL mengizinkan koneksi dari Vercel atau gunakan konfigurasi jaringan yang sesuai.
-5. Deploy ulang setelah environment variable disimpan.
+4. Deploy ulang setelah environment variable disimpan.
 
 Endpoint API yang tersedia:
 
@@ -81,7 +75,7 @@ Endpoint API yang tersedia:
 - `GET /api/auth/me`
 - `POST /api/inquiries`
 
-`index.php`, `login.php`, dan `register.php` tetap dipertahankan untuk mode PHP lokal. Vercel memakai file statis dan endpoint Node.js di `api/`.
+`index.php`, `login.php`, dan `register.php` tetap dipertahankan untuk mode PHP lokal. Vercel memakai file statis, endpoint Node.js di `api/`, dan Supabase sebagai database.
 
 Table yang dibuat:
 

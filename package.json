@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "mssql": "^11.0.1"
+    "@supabase/supabase-js": "^2.57.4"
   }
 }
